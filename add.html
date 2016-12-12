@@ -1,0 +1,93 @@
+<html>
+<head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="http://malsup.github.com/jquery.form.js"></script>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/css/select2.min.css"
+        rel="stylesheet" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/js/select2.min.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="style.css">
+	
+
+        <script src="validate.js"></script>
+
+	<script>
+	 var users= [{id:1,text:"rishin"}, {id:2,text:"vlad"},{id:3,text:"promolta"},{id:4,text:"contact"},{id:5,text:"jacob"} ];
+
+	$(document).ready(function(){
+
+
+	     	$(".userprompt").select2({
+        	data:users,
+        	width : 300,
+        	height :300
+
+
+        	});
+
+
+	   $('#AddSubmit').on('click',function(){
+		$("#error").html("");
+                $('#AddMail').ajaxForm({
+                        
+                        beforeSubmit:function(e){
+                                
+                        },
+			headers: {
+        			"user-token": localStorage["user_token"]
+    			},
+                        success:function(e){
+                               var response = JSON.parse(e);
+                                if(response["status"]==0){
+                                        $("#form-div").html(response["message"]);
+                                }
+                                else if(response["status"]==1){
+                                        $("#form-div").html(response["message"]);
+                                       
+
+                                }
+                        },
+                        error:function(e){
+					$("#error").html("Missing Fields");
+                        }
+                }).submit();
+
+            });
+
+
+
+
+	});
+	</script>
+
+</head>
+<body>	
+	
+	<div style="text-align:center" name="form-div" id ="form-div" class ="form-div" >
+		<h1>Send  mail</h1>
+
+		<form enctype="multipart/form-data" action="http://localhost/gmail/sendmail.php"  method ="post" id ="AddMail" class="addmail" >
+		<div>
+			Mail:TO:
+			<select name="to[]"  id ="userprompt" class="userprompt" multiple ></select>
+		</div>
+		<div>
+                        Subject :
+                        <input type ="text" name="subject"></input>
+                </div>
+
+		<div>
+			Content: 
+			<textarea name="matter"></textarea>
+		</div>
+		<div>
+			Attach Files:
+			<input type="file" name="images[]" id="images" multiple >
+		</div>
+
+			<button type="submit" name="AddSubmit" id ="AddSubmit" class ="send_button">Send</button>
+		</form>
+	</div>
+	<div id ="error" name="error" style="text-align:center"  > </div>
+</body>
+</html>
